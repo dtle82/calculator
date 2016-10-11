@@ -1,0 +1,46 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#calc_skeleton {
+    background-color: #404040;
+    padding: 10px 0px 10px 3vw;
+}
+
+.screen {
+    background-color: dodgerblue;
+    text-align:right;
+    height: 7vh;
+    margin: 5px 0px;
+    border-radius:3px;
+    width:95%;
+}
+
+.btn {
+    font-size: 2em;
+    /*margin:1vw;*/
+    font-weight:bold;
+}
+
+.btn-toolbar {
+    padding:0px;
+}
+
+.btn4{
+    padding: 1px;
+}
+
+.btn2{
+    padding: 1px;
+}
+
+.btn2 .btn {
+    margin: 0px 1% 0px 0px;
+    width: 47%;
+}
+
+.btn4 .btn {
+    margin: 0px 1% 0px 0px;
+}
