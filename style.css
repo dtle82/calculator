@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "Digital";
+    src: url("assets/fonts/style-7_digital-7/digital-7.ttf");
+}
+
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -16,6 +21,9 @@
     margin: 5px 0px;
     border-radius:3px;
     width:95%;
+    font-size: 4em;
+    font-family: Digital;
+    font-weight: bold;
 }
 
 .btn {
