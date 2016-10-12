@@ -17,8 +17,10 @@ function calc(type, value, item){
 }
 
 function apply_click_handler() {
+
     $("#calc_skeleton").on("click","button.btn",function() {
         console.log($(this).text());
+        var screen = $("#calc_skeleton .screen");
         var val = $(this).text();
         switch(val) {
             case 'CE':
