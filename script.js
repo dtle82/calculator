@@ -52,85 +52,98 @@ function calculator(param) {
     this.type = null;
     this.value = null;
     this.index = 0;
-    var calc = this;
     var global = [''];
 
     this.defineType = function(value) { // This function evaluates the type of the input and assigns it 4 types
         if(!isNaN(value)) {
-            calc.type = "number";
+            this.type = "number";
         } else if(value === "=") {
-            calc.type = "equalSign";
+            this.type = "equalSign";
         } else if(value === ".") {
-            calc.type = "period"
+            this.type = "period"
         } else {
-            calc.type = "operator";
+            this.type = "operator";
         }
-        calc.addInput(value); // This calls the next function in the chain after type has been set.
+        this.addInput(value); // This calls the next function in the chain after type has been set.
     }
 
     this.addInput = function(value) { // This function has state when
-        switch (calc.type) {
+        switch (this.type) {
             case "equalSign":
-                calc.choose_math(global);
-                calc.allClear();
+                this.choose_math(global);
+                this.allClear();
                 break;
             case "operator":
-                calc.switchKey(value);
-                calc.inputstate = false; // set state to false after so it cannot be input more than once
+                this.switchKey(value);
+                this.inputstate = false; // set state to false after so it cannot be input more than once
                 break;
             case "period":
-                calc.inputNumber(value);
-                calc.inputstate = false; // likewise
+                this.inputNumber(value);
+                this.inputstate = false; // likewise
                 break;
             default:
-                calc.inputstate = true; // sets state to true before so it catches any inputs that are numbers
-                calc.inputNumber(value);
+                this.inputstate = true; // sets state to true before so it catches any inputs that are numbers
+                this.inputNumber(value);
                 break;
         }
-        console.log("this is state " + calc.state);
+        console.log("this is state " + this.state);
         if (isfunction) {
             param(this.value);
         }
-        console.log(calc);
+        //console.log(calc);
         console.log(global);
     }
 
     this.incrementKey = function() {
-        if(calc.inputstate || !calc.clearstate) {
+        if(this.inputstate || !this.clearstate) {
             console.log("This is incremented");
-            calc.index++;
+            this.index++;
         }
     }
     this.switchKey = function(value) { // increments key to input next value and increment to get ready for next number
-        calc.incrementKey();
-        global[calc.index] = value;
-        this.value = global[calc.index];
-        calc.incrementKey();
-        global[calc.index] = [''];
+
+        if(typeof global[this.index] === 'object') {
+            //the last thing pressed was an operator, and this press is also an operator
+
+            if(global[this.index-1]===value){
+                //and they pressed the exact same operator as last time
+                global[this.index] = global[this.index-2];
+
+            } else {
+                //they pressed an operator again, but this time it is different than before
+                global.splice(this.index-1,2);
+                this.index-=2;
+            }
+        }
+        this.incrementKey();
+        global[this.index] = value;
+        this.value = global[this.index];
+        this.incrementKey();
+        global[this.index] = [''];
     }
 
     this.inputNumber = function(value){
-        if(calc.inputstate) {
-            global[calc.index] += value;
-            this.value = global[calc.index];
+        if(this.inputstate) {
+            global[this.index] += value;
+            this.value = global[this.index];
         } else {
-            this.value = global[calc.index];
+            this.value = global[this.index];
         }
     }
 
     this.choose_math = function(obj){
         switch (obj[1]){
             case "+":
-                this.value = calc.do_math(obj[0],obj[2],obj[1]);
+                this.value = this.do_math(obj[0],obj[2],obj[1]);
                 break;
             case "-":
-                this.value = calc.do_math(obj[0],obj[2],obj[1]);
+                this.value = this.do_math(obj[0],obj[2],obj[1]);
                 break;
             case "/":
-                this.value = calc.do_math(obj[0],obj[2],obj[1]);
+                this.value = this.do_math(obj[0],obj[2],obj[1]);
                 break;
             case "x":
-                this.value = calc.do_math(obj[0],obj[2],obj[1]);
+                this.value = this.do_math(obj[0],obj[2],obj[1]);
                 break;
         }
     }
@@ -153,21 +166,26 @@ function calculator(param) {
     }
 
     this.clear = function() {
-        global.pop();
-        if(calc.index > 0)
+
+        if(this.index > 0 && typeof global[this.index] === 'object')
         {
-            calc.index--;
+            global.splice(this.index-1,2);
+            this.index-=2;
+        } else if(this.index > 0){
+            global.pop();
+            this.index--;
+            global[this.index] = [''];
         }
-        global[calc.index] = [''];
-        calc.inputstate = false;
-        calc.clearstate = true;
+
+        this.inputstate = false;
+        this.clearstate = true;
         param(undefined);
         console.log(global);
     }
 
     this.allClear = function() {
         global = [''];
-        calc.index = 0;
+        this.index = 0;
         param(undefined);
         console.log(global);
     }
