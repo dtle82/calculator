@@ -52,7 +52,7 @@ function calculator(param) {
     this.type = null;
     this.value = null;
     this.index = 0;
-    var global = [''];
+    var gArray = [''];
 
     this.defineType = function(value) { // This function evaluates the type of the input and assigns it 4 types
         if(!isNaN(value)) {
@@ -70,7 +70,7 @@ function calculator(param) {
     this.addInput = function(value) { // This function has state when
         switch (this.type) {
             case "equalSign":
-                this.choose_math(global);
+                this.breakdown_Array(gArray);
                 this.allClear();
                 break;
             case "operator":
@@ -90,61 +90,63 @@ function calculator(param) {
         if (isfunction) {
             param(this.value);
         }
-        //console.log(calc);
-        console.log(global);
+        console.log(gArray);
     }
 
     this.incrementKey = function() {
-        if(this.inputstate || !this.clearstate) {
-            console.log("This is incremented");
-            this.index++;
-        }
+        console.log("This is incremented");
+        this.index++;
     }
+
     this.switchKey = function(value) { // increments key to input next value and increment to get ready for next number
 
-        if(typeof global[this.index] === 'object') {
+        if(typeof gArray[this.index] === 'object') {
             //the last thing pressed was an operator, and this press is also an operator
 
-            if(global[this.index-1]===value){
+            if(gArray[this.index-1]===value){
                 //and they pressed the exact same operator as last time
-                global[this.index] = global[this.index-2];
-
+                // advanced operations gArray[this.index] = gArray[this.index-2];
             } else {
                 //they pressed an operator again, but this time it is different than before
-                global.splice(this.index-1,2);
+                gArray.splice(this.index-1,2);
                 this.index-=2;
             }
         }
+
+        this.inputOperator(value);
+    }
+
+    this.inputOperator = function(value) {
         this.incrementKey();
-        global[this.index] = value;
-        this.value = global[this.index];
+        gArray[this.index] = value;
+        this.value = gArray[this.index];
         this.incrementKey();
-        global[this.index] = [''];
+        gArray[this.index] = [''];
     }
 
     this.inputNumber = function(value){
         if(this.inputstate) {
-            global[this.index] += value;
-            this.value = global[this.index];
+            gArray[this.index] += value;
+            this.value = gArray[this.index];
         } else {
-            this.value = global[this.index];
+            this.value = gArray[this.index];
         }
     }
 
-    this.choose_math = function(obj){
-        switch (obj[1]){
-            case "+":
-                this.value = this.do_math(obj[0],obj[2],obj[1]);
-                break;
-            case "-":
-                this.value = this.do_math(obj[0],obj[2],obj[1]);
-                break;
-            case "/":
-                this.value = this.do_math(obj[0],obj[2],obj[1]);
-                break;
-            case "x":
-                this.value = this.do_math(obj[0],obj[2],obj[1]);
-                break;
+    this.breakdown_Array = function(obj) {
+
+        for(var i = 0; i <= obj.length;i++)
+        {
+            if(obj[i] === 'x' || obj[i] === '/')
+            {
+                console.log(obj[i]);
+                this.value = this.do_math(obj[i-1],obj[i+1],obj[i]);
+            } else if (obj[i] === '+' || obj[i] === '-'){
+                //console.log(obj[i]);
+                this.value = this.do_math(obj[i-1],obj[i+1],obj[i]);
+            } else {
+
+            }
         }
     }
 
@@ -167,26 +169,26 @@ function calculator(param) {
 
     this.clear = function() {
 
-        if(this.index > 0 && typeof global[this.index] === 'object')
+        if(this.index > 0 && typeof gArray[this.index] === 'object')
         {
-            global.splice(this.index-1,2);
+            gArray.splice(this.index-1,2);
             this.index-=2;
         } else if(this.index > 0){
-            global.pop();
+            gArray.pop();
             this.index--;
-            global[this.index] = [''];
+            gArray[this.index] = [''];
         }
 
         this.inputstate = false;
         this.clearstate = true;
         param(undefined);
-        console.log(global);
+        console.log(gArray);
     }
 
     this.allClear = function() {
-        global = [''];
+        gArray = [''];
         this.index = 0;
         param(undefined);
-        console.log(global);
+        console.log(gArray);
     }
 }
