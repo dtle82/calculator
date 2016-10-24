@@ -113,43 +113,45 @@ function calculator(param) {
     }
 
     this.addInput = function(value) { // This function has state when
-        switch (this.type) {
-            case "equalSign":
+        //LFZ START
+        switch (this.type) { // This switch statement evaluates the type property of our calc object, depending on what type, show addition methods
+            case "equalSign": // If the current type is 'equalSign'
                 console.log("Initial Original array is ", gArray);
                 /*
                 These functions do not pass the array as parameter, instead they use global variable of the object
                  */
-                this.partialOperand(value);
-                this.modifyArrayWithLastSavedComputations();
-                this.saveLastInputForAdvancedOperations();
-                this.loopArrayForMultipleDivision();
-                this.loopArrayForAdditionSubtraction();
+                this.partialOperand(value); // this calls our function that evaluates partial Operand, basically run some logic if an = was pressed prematurely ( 3 + =)
+                this.modifyArrayWithLastSavedComputations(); // at this point, we run our function to change our array of computational values to add the last 2 previous operations ( + 5 )
+                this.saveLastInputForAdvancedOperations(); // we run this function to to save take the last 2 elements of the computational array and save it to a new array
+                this.loopArrayForMultipleDivision(); // run through our array of computational values and multiple and divide first, convert the result in latter element with addition by 0 ( 5 * 5 = 0 + 25)
+                this.loopArrayForAdditionSubtraction(); // call this function to loop through our array and compute all remaining addition and subtraction
                 //console.log("Advanced operation array ", gAdvancedArray);
-                this.equalSignCounter++;
-                this.inputstate = false;
+                this.equalSignCounter++; // increment our equal sign operator to run a check to see if an equal sign was pressed before (if it is more than 0 then it has already been pressed once)
+                this.inputstate = false; // this boolean controls the adding of additional values into our computation array
                 // set state to false after so we can branch a different logic for multiple entries of equal signs
                 break;
-            case "operator":
-                this.switchKey(value);
-                this.inputOperator(value);
+            case "operator": // if the current type is 'operator'
+                this.switchKey(value); // this function basically points our index to the next array element
+                this.inputOperator(value); // this function inserts the operator into our computational array
                 this.inputstate = false; // set state to false after so it cannot be input more than once
-                this.decimalCount = 0; // reset decimal count after an operator has been pressed
+                this.decimalCount = 0; // reset decimal count after an operator has been pressed, this insures that the user can press a decimal again for the next computation (ie .5 + .5)
                 break;
-            case "period":
+            case "period": // if the current type is period
                 //debugger;
-                this.inputNumber(value);
-                this.decimalCount++;
+                this.inputNumber(value); // this function is the inserting the period into our global computation array
+                this.decimalCount++; // increase our decimal count so that if it's more than 1, another period cannot be added to our array again
                 this.inputstate = false; // same as operator, cannot be input more than twice because of state status
                 break;
-            default:
+            default: // if not a period, if not an operator and if not equalSign (basically a number was pressed)
                 this.inputstate = true; // sets state to true before so it catches any inputs that are numbers
-                this.inputNumber(value);
+                this.inputNumber(value); // this function is inserting any other value that's not period, operator, equalsign into our computational array
                 break;
         }
-        if (isfunction) {
+        if (isfunction) {  // check this if our isfunction property is true or false, if true it is a function
             //console.log("This value is " + this.value);
-            param(this.value); // this is calling the callback function
+            param(this.value); // this is calling the callback function param, param was the name of our parameter that's actually a function, here we invoke that function with this.value that's passed in as a parameter for that invoked function
         }
+        //LFZ END
     }
 
     this.partialOperand = function(value) { // repeat code will have to optimize this later
@@ -340,19 +342,20 @@ function calculator(param) {
     }
 
     this.clear = function() {
-
-        if(this.index > 0 && typeof gArray[this.index] === 'object')
+        //LFZ START
+        if(this.index > 0 && typeof gArray[this.index] === 'object') // if this.index is greater than 0 (our array already has values and is not blank) AND the value inside is not an object, which means it's not an empty object literal that was prep for the next number added after an operand
         {
-            gArray.splice(this.index-1,2);
-            this.index-=2;
-        } else if(this.index > 0){
-            gArray.pop();
-            this.index--;
-            gArray[this.index] = [''];
+            gArray.splice(this.index-1,2); // removes the next number prepare (empty string object literal) and previous operator
+            this.index-=2; // sets the index back by 2 spaces (move the cursor back 2)
+        } else if(this.index > 0){ // if it's an operand or number
+            gArray.pop(); // remove the current element
+            this.index--; // decrease the index by 1
+            gArray[this.index] = ['']; // sets the array element to empty string object for next data entry
         }
-        this.inputstate = false;
-        param(undefined);
-        console.log(gArray);
+        this.inputstate = false; // set input state to false
+        param(undefined); // run the callback function with undefined as the parameter
+        console.log(gArray); // console log our global array for testing purpose
+        //LFZ END
     }
 
     this.allClear = function() {
